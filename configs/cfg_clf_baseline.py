@@ -39,7 +39,7 @@ cfg = basic_cfg
 cfg.data_df = "/kaggle/working/rsna_breast_monai_solution/train_df_4folds.csv"
 # 1024 dataset is from:
 # https://www.kaggle.com/code/theoviel/dicom-resized-png-jpg
-cfg.root_dir = "/kaggle/input/dicom-resized-png-jpg/output/"
+cfg.root_dir = "/kaggle/input/rsna-breast-cancer-1024-pngs/output/"
 # train
 cfg.train = True
 cfg.eval = True
