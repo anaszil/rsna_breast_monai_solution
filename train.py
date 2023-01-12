@@ -16,6 +16,7 @@ from tqdm import tqdm
 
 from utils import *
 
+
 from monai.transforms import (
     Compose,
     Activations,
@@ -29,6 +30,7 @@ import json
 from dataset import CustomDataset
 from sklearn.metrics import roc_auc_score
 import timm
+
 
 def main(cfg):
 
@@ -66,7 +68,9 @@ def main(cfg):
         print(f"weights from: {cfg.weights} are loaded.")
 
     # set optimizer, lr scheduler
-    optimizer = torch.optim.AdamW(model.parameters(), lr=cfg.lr, weight_decay=cfg.weight_decay)
+    optimizer = torch.optim.AdamW(
+        model.parameters(), lr=cfg.lr, weight_decay=cfg.weight_decay
+    )
     scheduler = torch.optim.lr_scheduler.OneCycleLR(
         optimizer,
         max_lr=cfg.lr,
@@ -78,7 +82,9 @@ def main(cfg):
         final_div_factor=cfg.lr_final_div,
     )
     # set loss
-    loss_function = torch.nn.BCEWithLogitsLoss(pos_weight=torch.as_tensor([cfg.pos_weight])).to(cfg.device)
+    loss_function = torch.nn.BCEWithLogitsLoss(
+        pos_weight=torch.as_tensor([cfg.pos_weight])
+    ).to(cfg.device)
 
     # set other tools
     scaler = GradScaler()
@@ -154,7 +160,9 @@ def run_train(
 
     for itr in progress_bar:
         batch = next(tr_it)
-        inputs, labels = batch["image"].to(cfg.device), batch["label"].float().to(cfg.device)
+        inputs, labels = batch["image"].to(cfg.device), batch["label"].float().to(
+            cfg.device
+        )
         iteration += 1
 
         step += cfg.batch_size
@@ -177,7 +185,9 @@ def run_train(
         optimizer.zero_grad()
         scheduler.step()
 
-        progress_bar.set_description(f"loss: {np.mean(losses):.2f} lr: {scheduler.get_last_lr()[0]:.6f}")
+        progress_bar.set_description(
+            f"loss: {np.mean(losses):.2f} lr: {scheduler.get_last_lr()[0]:.6f}"
+        )
     score = pfbeta(all_labels, all_outputs, 1.0)[0]
     auc = roc_auc_score(all_labels, all_outputs)
     print("Train F1: ", score, "AUC: ", auc)
@@ -197,11 +207,13 @@ def run_eval(model, val_dataloader, cfg, writer, epoch):
 
     for itr in progress_bar:
         batch = next(tr_it)
-        inputs, labels = batch["image"].to(cfg.device), batch["label"].float().to(cfg.device)
+        inputs, labels = batch["image"].to(cfg.device), batch["label"].float().to(
+            cfg.device
+        )
         ids = batch["prediction_id"]
         outputs = model(inputs)
-        outputs = list(torch.sigmoid(outputs).detach().cpu().numpy()[:,0])
-        labels = list(labels.detach().cpu().numpy()[:,0])
+        outputs = list(torch.sigmoid(outputs).detach().cpu().numpy()[:, 0])
+        labels = list(labels.detach().cpu().numpy()[:, 0])
 
         all_outputs.extend(outputs)
         all_labels.extend(labels)
@@ -234,9 +246,13 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="")
 
-    parser.add_argument("-c", "--config", default="cfg_clf_baseline", help="config filename")
-    parser.add_argument("-f", "--fold", type=int, default=0, help="fold")
-    parser.add_argument("-backbone", "--backbone", default="tf_efficientnetv2_s", help="backbone")
+    parser.add_argument(
+        "-c", "--config", default="cfg_clf_baseline", help="config filename"
+    )
+    parser.add_argument("-f", "--fold", type=int, default=4, help="fold")
+    parser.add_argument(
+        "-backbone", "--backbone", default="tf_efficientnetv2_s", help="backbone"
+    )
     parser.add_argument("-s", "--seed", type=int, default=20220421, help="seed")
     parser.add_argument("-w", "--weights", default=None, help="the path of weights")
 

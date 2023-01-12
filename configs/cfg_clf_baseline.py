@@ -39,7 +39,7 @@ cfg = basic_cfg
 cfg.data_df = "train_df_4folds.csv"
 # 1024 dataset is from:
 # https://www.kaggle.com/code/theoviel/dicom-resized-png-jpg
-cfg.root_dir = "/raid/rsna/train_images_png_kaggle"
+cfg.root_dir = "/kaggle/input/dicom-resized-png-jpg/output/"
 # train
 cfg.train = True
 cfg.eval = True
@@ -48,7 +48,7 @@ cfg.start_eval_epoch = 0
 cfg.run_tta_val = False
 cfg.amp = True
 cfg.val_amp = False
-cfg.lr = 3e-4
+cfg.lr = 8e-5
 cfg.lr_div = 1.0
 cfg.lr_final_div = 10000.0
 cfg.weight_decay = 1e-2
@@ -59,7 +59,7 @@ cfg.restart_epoch = 100
 
 # dataset
 cfg.img_size = (1024, 1024)
-cfg.batch_size = 64
+cfg.batch_size = 8
 cfg.val_batch_size = 128
 cfg.train_cache_rate = 0.0
 cfg.val_cache_rate = 0.0
