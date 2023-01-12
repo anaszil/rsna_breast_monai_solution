@@ -54,13 +54,13 @@ cfg.lr_final_div = 10000.0
 cfg.weight_decay = 1e-2
 cfg.epochs = 10
 # cfg.warmup_epoch = 1
-cfg.num_workers = 32
+cfg.num_workers = 2
 cfg.restart_epoch = 100
 
 # dataset
 cfg.img_size = (1024, 1024)
 cfg.batch_size = 8
-cfg.val_batch_size = 128
+cfg.val_batch_size = 8
 cfg.train_cache_rate = 0.0
 cfg.val_cache_rate = 0.0
 cfg.gpu_cache = False
