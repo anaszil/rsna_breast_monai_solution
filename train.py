@@ -44,6 +44,9 @@ def main(cfg):
 
     train_dataset = CustomDataset(df=train_df, cfg=cfg, aug=cfg.train_transforms)
     val_dataset = CustomDataset(df=val_df, cfg=cfg, aug=cfg.val_transforms)
+    import pdb
+
+    pdb.set_trace()
     print("train: ", len(train_dataset), " val: ", len(val_dataset))
     train_dataloader = get_train_dataloader(train_dataset, cfg)
     val_dataloader = get_val_dataloader(val_dataset, cfg)
@@ -249,7 +252,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-c", "--config", default="cfg_clf_baseline", help="config filename"
     )
-    parser.add_argument("-f", "--fold", type=int, default=4, help="fold")
+    parser.add_argument("-f", "--fold", type=int, default=0, help="fold")
     parser.add_argument(
         "-backbone", "--backbone", default="tf_efficientnetv2_s", help="backbone"
     )
