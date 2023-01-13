@@ -44,9 +44,6 @@ def main(cfg):
 
     train_dataset = CustomDataset(df=train_df, cfg=cfg, aug=cfg.train_transforms)
     val_dataset = CustomDataset(df=val_df, cfg=cfg, aug=cfg.val_transforms)
-    import pdb
-
-    pdb.set_trace()
     print("train: ", len(train_dataset), " val: ", len(val_dataset))
     train_dataloader = get_train_dataloader(train_dataset, cfg)
     val_dataloader = get_val_dataloader(val_dataset, cfg)
@@ -102,19 +99,19 @@ def main(cfg):
     for epoch in range(cfg.epochs):
         print("EPOCH:", epoch)
         gc.collect()
-        # run_train(
-        #     model=model,
-        #     train_dataloader=train_dataloader,
-        #     optimizer=optimizer,
-        #     scheduler=scheduler,
-        #     cfg=cfg,
-        #     scaler=scaler,
-        #     writer=writer,
-        #     epoch=epoch,
-        #     iteration=i,
-        #     step=step,
-        #     loss_function=loss_function,
-        # )
+        run_train(
+            model=model,
+            train_dataloader=train_dataloader,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            cfg=cfg,
+            scaler=scaler,
+            writer=writer,
+            epoch=epoch,
+            iteration=i,
+            step=step,
+            loss_function=loss_function,
+        )
 
         val_metric = run_eval(
             model=model,
