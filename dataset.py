@@ -4,6 +4,7 @@ import torch
 import os
 from torch.utils.data import Dataset
 
+
 class CustomDataset(Dataset):
     def __init__(
         self,
@@ -19,7 +20,9 @@ class CustomDataset(Dataset):
 
     def __getitem__(self, idx):
         sample = self.df.iloc[idx]
-        img_path = os.path.join(self.cfg.root_dir, f"{sample.patient_id}_{sample.image_id}.png")
+        img_path = os.path.join(
+            self.cfg.root_dir, f"{sample.patient_id}/{sample.image_id}.png"
+        )
         label = np.expand_dims(np.array(sample.cancer, dtype=np.int8), axis=0)
 
         data = {
