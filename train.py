@@ -51,7 +51,7 @@ def main(cfg):
     # set model
     model = timm.create_model(
         cfg.backbone,
-        pretrained=True,
+        pretrained=False,
         num_classes=cfg.num_classes,
         drop_rate=cfg.drop_rate,
         drop_path_rate=cfg.drop_path_rate,
