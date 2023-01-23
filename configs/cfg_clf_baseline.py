@@ -75,6 +75,7 @@ cfg.in_channels = 3
 cfg.clf_threshold = 0.1
 cfg.drop_rate = 0.2
 cfg.drop_path_rate = 0.0
+cfg.pretrained = True
 
 # transforms
 cfg.train_transforms = Compose(
