@@ -192,6 +192,8 @@ def run_train(
     score = pfbeta(all_labels, all_outputs, 1.0)[0]
     auc = roc_auc_score(all_labels, all_outputs)
     print("Train F1: ", score, "AUC: ", auc)
+    writer.add_scalar("Train F1", auc, epoch)
+    writer.add_scalar("AUC", auc, epoch)
 
 
 def run_eval(model, val_dataloader, cfg, writer, epoch):
@@ -236,7 +238,9 @@ def run_eval(model, val_dataloader, cfg, writer, epoch):
     except:
         bin_score = 0.0
     print("Val F1: ", score, "Val Bin F1: ", bin_score, "AUC: ", auc)
-    writer.add_scalar("F1", bin_score, epoch)
+    writer.add_scalar("Val Bin F1:", bin_score, epoch)
+    writer.add_scalar("Val F1", bin_score, epoch)
+    writer.add_scalar("AUC", auc, epoch)
 
     return score
 
