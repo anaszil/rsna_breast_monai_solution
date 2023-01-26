@@ -17,11 +17,15 @@ class CustomDataset(Dataset):
         self.aug = aug
         self.df = df
         self.epoch_len = self.df.shape[0]
+        self.sep = "/"
+
+        if hasattr(self.cfg, "sep_data_path"):
+            self.sep = self.cfg.sep_data_path
 
     def __getitem__(self, idx):
         sample = self.df.iloc[idx]
         img_path = os.path.join(
-            self.cfg.root_dir, f"{sample.patient_id}/{sample.image_id}.png"
+            self.cfg.root_dir, f"{sample.patient_id}{self.sep}{sample.image_id}.png"
         )
         label = np.expand_dims(np.array(sample.cancer, dtype=np.int8), axis=0)
 

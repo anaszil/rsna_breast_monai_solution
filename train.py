@@ -4,6 +4,8 @@ import importlib
 import os
 import sys
 import shutil
+import wandb
+
 
 import numpy as np
 import pandas as pd
@@ -11,7 +13,6 @@ import torch
 from torch import nn
 from torch.cuda.amp import GradScaler, autocast
 from torch.utils.data import DataLoader
-from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
 from utils import *
@@ -32,7 +33,7 @@ from sklearn.metrics import roc_auc_score
 import timm
 
 
-def main(cfg):
+def main(cfg, track_wandb=False):
 
     os.makedirs(str(cfg.output_dir + f"/fold{cfg.fold}/"), exist_ok=True)
     set_seed(cfg.seed)
@@ -57,6 +58,7 @@ def main(cfg):
         drop_rate=cfg.drop_rate,
         drop_path_rate=cfg.drop_path_rate,
     )
+
     # model = EfnNet()
     model = torch.nn.DataParallel(model)
     model.to(cfg.device)
@@ -87,9 +89,11 @@ def main(cfg):
         pos_weight=torch.as_tensor([cfg.pos_weight])
     ).to(cfg.device)
 
+    if track_wandb == "all":
+        wandb.watch(model, loss_function, log="all", log_freq=1000)  # WANDB WATCH
+
     # set other tools
     scaler = GradScaler()
-    writer = SummaryWriter(str(cfg.output_dir + f"/fold{cfg.fold}/"))
 
     # train and val loop
     step = 0
@@ -107,7 +111,6 @@ def main(cfg):
             scheduler=scheduler,
             cfg=cfg,
             scaler=scaler,
-            writer=writer,
             epoch=epoch,
             iteration=i,
             step=step,
@@ -118,7 +121,6 @@ def main(cfg):
             model=model,
             val_dataloader=val_dataloader,
             cfg=cfg,
-            writer=writer,
             epoch=epoch,
         )
 
@@ -146,7 +148,6 @@ def run_train(
     scheduler,
     cfg,
     scaler,
-    writer,
     epoch,
     iteration,
     step,
@@ -192,11 +193,10 @@ def run_train(
     score = pfbeta(all_labels, all_outputs, 1.0)[0]
     auc = roc_auc_score(all_labels, all_outputs)
     print("Train F1: ", score, "AUC: ", auc)
-    writer.add_scalar("Train F1", auc, epoch)
-    writer.add_scalar("AUC", auc, epoch)
+    wandb.log({"Train F1": score, "AUC": auc}, step=epoch)
 
 
-def run_eval(model, val_dataloader, cfg, writer, epoch):
+def run_eval(model, val_dataloader, cfg, epoch):
 
     model.eval()
     torch.set_grad_enabled(False)
@@ -238,9 +238,7 @@ def run_eval(model, val_dataloader, cfg, writer, epoch):
     except:
         bin_score = 0.0
     print("Val F1: ", score, "Val Bin F1: ", bin_score, "AUC: ", auc)
-    writer.add_scalar("Val Bin F1:", bin_score, epoch)
-    writer.add_scalar("Val F1", bin_score, epoch)
-    writer.add_scalar("AUC", auc, epoch)
+    wandb.log({"Val F1: ", score, "Val Bin F1: ", bin_score, "AUC: ", auc}, step=epoch)
 
     return score
 
