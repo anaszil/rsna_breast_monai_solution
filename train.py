@@ -124,17 +124,22 @@ def main(cfg, track_wandb=False):
             epoch=epoch,
         )
 
+        checkpoint = create_checkpoint(
+            model,
+            optimizer,
+            epoch,
+            scheduler=scheduler,
+            scaler=scaler,
+        )
+
+        torch.save(
+            checkpoint,
+            f"{cfg.output_dir}/fold{cfg.fold}/checkpoint_{epoch}.pth",
+        )
+
         if val_metric > best_metric:
             print(f"SAVING CHECKPOINT: val_metric {best_metric:.5} -> {val_metric:.5}")
             best_metric = val_metric
-
-            checkpoint = create_checkpoint(
-                model,
-                optimizer,
-                epoch,
-                scheduler=scheduler,
-                scaler=scaler,
-            )
             torch.save(
                 checkpoint,
                 f"{cfg.output_dir}/fold{cfg.fold}/checkpoint_best_metric.pth",
