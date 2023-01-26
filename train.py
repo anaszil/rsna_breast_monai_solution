@@ -42,12 +42,12 @@ def main(cfg, track_wandb=False):
 
     val_df = df[(df["fold"] == cfg.fold) & (df["cancer"] == 1)].sample(8)
     val_df = pd.concat(
-        [val_df, df[(df["fold"] == cfg.fold) & (df["cancer"] == 1)].sample(8)]
+        [val_df, df[(df["fold"] == cfg.fold) & (df["cancer"] == 0)].sample(8)]
     )
 
     train_df = df[(df["fold"] != cfg.fold) & (df["cancer"] == 1)].sample(32)
     train_df = pd.concat(
-        [train_df, df[(df["fold"] != cfg.fold) & (df["cancer"] == 1)].sample(32)]
+        [train_df, df[(df["fold"] != cfg.fold) & (df["cancer"] == 0)].sample(32)]
     )
 
     # train_df = df[df["fold"] != cfg.fold].sample(64)
