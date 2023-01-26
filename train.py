@@ -252,7 +252,7 @@ def run_eval(model, val_dataloader, cfg, epoch):
     except:
         bin_score = 0.0
     print("Val F1: ", score, "Val Bin F1: ", bin_score, "AUC: ", auc)
-    wandb.log({"Val F1: ", score, "Val Bin F1: ", bin_score, "AUC: ", auc}, step=epoch)
+    wandb.log({"Val F1": score, "Val Bin F1": bin_score, "AUC": auc}, step=epoch)
 
     return score
 
