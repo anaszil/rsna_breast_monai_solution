@@ -40,8 +40,8 @@ def main(cfg, track_wandb=False):
     # set dataset, dataloader
     df = pd.read_csv(cfg.data_df)
 
-    val_df = df[df["fold"] == cfg.fold]
-    train_df = df[df["fold"] != cfg.fold]
+    val_df = df[df["fold"] == cfg.fold].sample(16)
+    train_df = df[df["fold"] != cfg.fold].sample(64)
 
     train_dataset = CustomDataset(df=train_df, cfg=cfg, aug=cfg.train_transforms)
     val_dataset = CustomDataset(df=val_df, cfg=cfg, aug=cfg.val_transforms)
