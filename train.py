@@ -198,7 +198,9 @@ def run_train(
     score = pfbeta(all_labels, all_outputs, 1.0)[0]
     auc = roc_auc_score(all_labels, all_outputs)
     print("Train F1: ", score, "AUC: ", auc)
-    wandb.log({"Train F1": score, "AUC": auc}, step=epoch)
+    wandb.log(
+        {"Loss": np.mean(losses), "Train F1": score, "Train AUC": auc}, step=epoch
+    )
 
 
 def run_eval(model, val_dataloader, cfg, epoch):
@@ -243,7 +245,7 @@ def run_eval(model, val_dataloader, cfg, epoch):
     except:
         bin_score = 0.0
     print("Val F1: ", score, "Val Bin F1: ", bin_score, "AUC: ", auc)
-    wandb.log({"Val F1": score, "Val Bin F1": bin_score, "AUC": auc}, step=epoch)
+    wandb.log({"Val F1": score, "Val Bin F1": bin_score, "Val AUC": auc}, step=epoch)
 
     return score
 
