@@ -22,7 +22,10 @@ class CustomDataset(Dataset):
         if hasattr(self.cfg, "kaggle") and self.cfg.kaggle == True:
             self.path_skip = "content/drive/MyDrive/RSNA/Data/PNG/png_full_size_train"
             self.chunk1 = set(
-                glob("/kaggle/input/rsna-png-chunk1/" + self.path_skip + "/*")
+                map(
+                    lambda x: x.split("/")[-1],
+                    glob("/kaggle/input/rsna-png-chunk1/" + self.path_skip + "/*"),
+                )
             )
             # self.chunk2 = set(glob("/kaggle/input/rsna-png-chunk2/" + self.path_skip + "/*"))
 
