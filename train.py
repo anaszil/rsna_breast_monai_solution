@@ -62,18 +62,12 @@ def main(cfg, track_wandb=False):
     # model = EfnNet()
     model = torch.nn.DataParallel(model)
     model.to(cfg.device)
-    if cfg.weights is not None:
-        model.load_state_dict(
-            torch.load(os.path.join(f"{cfg.output_dir}/fold{cfg.fold}", cfg.weights))[
-                "model"
-            ]
-        )
-        print(f"weights from: {cfg.weights} are loaded.")
 
     # set optimizer, lr scheduler
     optimizer = torch.optim.AdamW(
         model.parameters(), lr=cfg.lr, weight_decay=cfg.weight_decay
     )
+
     scheduler = torch.optim.lr_scheduler.OneCycleLR(
         optimizer,
         max_lr=cfg.lr,
@@ -84,6 +78,24 @@ def main(cfg, track_wandb=False):
         div_factor=cfg.lr_div,
         final_div_factor=cfg.lr_final_div,
     )
+    if cfg.weights is not None:
+        model.load_state_dict(
+            torch.load(os.path.join(f"{cfg.output_dir}/fold{cfg.fold}", cfg.weights))[
+                "model"
+            ]
+        )
+        optimizer.load_state_dict(
+            torch.load(os.path.join(f"{cfg.output_dir}/fold{cfg.fold}", cfg.weights))[
+                "optimizer"
+            ]
+        )
+        scheduler.load_state_dict(
+            torch.load(os.path.join(f"{cfg.output_dir}/fold{cfg.fold}", cfg.weights))[
+                "scheduler"
+            ]
+        )
+        print(f"weights from: {cfg.weights} are loaded.")
+
     # set loss
     loss_function = torch.nn.BCEWithLogitsLoss(
         pos_weight=torch.as_tensor([cfg.pos_weight])
