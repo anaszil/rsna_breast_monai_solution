@@ -20,7 +20,7 @@ class CustomDataset(Dataset):
         self.epoch_len = self.df.shape[0]
         self.sep = "/"
         if hasattr(self.cfg, "kaggle") and self.cfg.kaggle == True:
-            self.path_skip = "/content/drive/MyDrive/RSNA/Data/PNG/png_full_size_train"
+            self.path_skip = "content/drive/MyDrive/RSNA/Data/PNG/png_full_size_train"
             self.chunk1 = set(
                 glob("/kaggle/input/rsna-png-chunk1/" + self.path_skip + "/*")
             )
