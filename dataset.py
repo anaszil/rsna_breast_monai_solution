@@ -23,7 +23,7 @@ class CustomDataset(Dataset):
             self.path_skip = "content/drive/MyDrive/RSNA/Data/PNG/png_full_size_train"
             self.chunk1 = set(
                 map(
-                    lambda x: x.split("/")[-1],
+                    lambda x: int(x.split("/")[-1]),
                     glob("/kaggle/input/rsna-png-chunk1/" + self.path_skip + "/*"),
                 )
             )
