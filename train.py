@@ -84,16 +84,18 @@ def main(cfg, track_wandb=False):
                 "model"
             ]
         )
-        optimizer.load_state_dict(
-            torch.load(os.path.join(f"{cfg.output_dir}/fold{cfg.fold}", cfg.weights))[
-                "optimizer"
-            ]
-        )
-        scheduler.load_state_dict(
-            torch.load(os.path.join(f"{cfg.output_dir}/fold{cfg.fold}", cfg.weights))[
-                "scheduler"
-            ]
-        )
+        if hasattr(cfg, "load_spec") and "optimizer" in cfg.load_spec:
+            optimizer.load_state_dict(
+                torch.load(
+                    os.path.join(f"{cfg.output_dir}/fold{cfg.fold}", cfg.weights)
+                )["optimizer"]
+            )
+        if hasattr(cfg, "load_spec") and "scheduler" in cfg.load_spec:
+            scheduler.load_state_dict(
+                torch.load(
+                    os.path.join(f"{cfg.output_dir}/fold{cfg.fold}", cfg.weights)
+                )["scheduler"]
+            )
         print(f"weights from: {cfg.weights} are loaded.")
 
     # set loss
