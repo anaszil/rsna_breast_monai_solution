@@ -31,6 +31,7 @@ import json
 from dataset import CustomDataset
 from sklearn.metrics import roc_auc_score
 import timm
+import nextvit
 
 
 def main(cfg, track_wandb=False):
