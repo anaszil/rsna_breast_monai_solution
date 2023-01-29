@@ -51,14 +51,21 @@ def main(cfg, track_wandb=False):
     val_dataloader = get_val_dataloader(val_dataset, cfg)
 
     # set model
-    model = timm.create_model(
-        cfg.backbone,
-        in_chans=cfg.in_channels,
-        pretrained=cfg.pretrained,
-        num_classes=cfg.num_classes,
-        drop_rate=cfg.drop_rate,
-        drop_path_rate=cfg.drop_path_rate,
-    )
+    if "nextvit" in cfg.backbone:
+        model = timm.create_model(
+            cfg.backbone,
+            pretrained=cfg.pretrained,
+            num_classes=cfg.num_classes,
+        )
+    else:
+        model = timm.create_model(
+            cfg.backbone,
+            in_chans=cfg.in_channels,
+            pretrained=cfg.pretrained,
+            num_classes=cfg.num_classes,
+            drop_rate=cfg.drop_rate,
+            drop_path_rate=cfg.drop_path_rate,
+        )
 
     # model = EfnNet()
     model = torch.nn.DataParallel(model)
