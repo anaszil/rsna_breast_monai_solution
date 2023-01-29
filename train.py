@@ -263,7 +263,10 @@ def run_eval(model, val_dataloader, cfg, epoch):
     auc = roc_auc_score(all_labels, all_outputs)
 
     thresh = optimize_preds(
-        all_outputs, all_labels, return_thresh=True, print_results=True
+        torch.tensor(all_outputs.values),
+        torch.tensor(all_labels.values),
+        return_thresh=True,
+        print_results=True,
     )
 
     all_outputs = (np.array(all_outputs) > thresh).astype(np.int8).tolist()
