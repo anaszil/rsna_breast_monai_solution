@@ -261,13 +261,23 @@ def run_eval(model, val_dataloader, cfg, epoch):
 
     score = pfbeta(all_labels, all_outputs, 1.0)
     auc = roc_auc_score(all_labels, all_outputs)
-    all_outputs = (np.array(all_outputs) > cfg.clf_threshold).astype(np.int8).tolist()
+
+    thresh = optimize_preds(
+        all_outputs, all_labels, return_thresh=True, print_results=True
+    )
+
+    all_outputs = (np.array(all_outputs) > thresh).astype(np.int8).tolist()
     try:
         bin_score = pfbeta(all_labels, all_outputs, 1.0)
     except:
         bin_score = 0.0
-    print("Val F1: ", score, "Val Bin F1: ", bin_score, "AUC: ", auc)
-    wandb.log({"Val F1": score, "Val Bin F1": bin_score, "Val AUC": auc}, step=epoch)
+    print(
+        "Val F1: ", score, "thresh: ", thresh, "Val Bin F1: ", bin_score, "AUC: ", auc
+    )
+    wandb.log(
+        {"Val F1": score, "thresh": thresh, "Val Bin F1": bin_score, "Val AUC": auc},
+        step=epoch,
+    )
 
     return score
 
