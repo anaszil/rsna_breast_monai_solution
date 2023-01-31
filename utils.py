@@ -43,13 +43,13 @@ def set_seed(seed):
 
 def get_train_dataloader(train_dataset, cfg):
     df = train_dataset.df.copy()
-    df["weight"] = 1
-    df.loc[df.cancer == 1, "weight"] = len(df.loc[df.cancer == 0]) / len(
-        df.loc[df.cancer == 1]
-    )
-    wrs = WeightedRandomSampler(
-        weights=df.weight.tolist(), num_samples=len(df), replacement=True
-    )
+    # df["weight"] = 1
+    # df.loc[df.cancer == 1, "weight"] = len(df.loc[df.cancer == 0]) / len(
+    #     df.loc[df.cancer == 1]
+    # )
+    # wrs = WeightedRandomSampler(
+    #     weights=df.weight.tolist(), num_samples=len(df), replacement=True
+    # )
     # ewrs = ExhaustiveWeightedRandomSampler(df.weight.tolist(), num_samples=10000)
 
     train_dataloader = DataLoader(
