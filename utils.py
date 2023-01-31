@@ -54,7 +54,7 @@ def get_train_dataloader(train_dataset, cfg):
 
     train_dataloader = DataLoader(
         train_dataset,
-        sampler=wrs,
+        # sampler=wrs,
         shuffle=cfg.shuffle,
         batch_size=cfg.batch_size,
         num_workers=cfg.num_workers,
