@@ -96,9 +96,6 @@ def create_checkpoint(model, optimizer, epoch, scheduler=None, scaler=None):
 
 
 def pfbeta_torch(preds, labels, beta=1):
-    if preds.dim() != 2 or (preds.dim() == 2 and preds.shape[1] != 2):
-        raise ValueError("Houston, we got a problem")
-    preds = preds[:, 1]
     preds = preds.clip(0, 1)
     y_true_count = labels.sum()
     ctp = preds[labels == 1].sum()
