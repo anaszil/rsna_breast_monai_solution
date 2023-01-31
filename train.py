@@ -217,7 +217,7 @@ def run_train(
         progress_bar.set_description(
             f"loss: {np.mean(losses):.2f} lr: {scheduler.get_last_lr()[0]:.6f}"
         )
-    score = pfbeta(all_labels, all_outputs, 1.0)[0]
+    score = pfbeta(all_labels, all_outputs, 1.0)
     auc = roc_auc_score(all_labels, all_outputs)
     print("Train pF1: ", score, "AUC: ", auc)
     wandb.log(
