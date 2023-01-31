@@ -41,8 +41,14 @@ def main(cfg, track_wandb=False):
     # set dataset, dataloader
     df = pd.read_csv(cfg.data_df)
 
-    val_df = df[df["fold"] == cfg.fold].head(16)
-    train_df = df[df["fold"] != cfg.fold].head(32)
+    val_df = pd.concat(
+        df[df["fold"] == cfg.fold].head(15),
+        df[(df["fold"] == cfg.fold) & (df["cancer"] == 1)].head(1),
+    )
+    train_df = pd.concat(
+        df[df["fold"] != cfg.fold].head(31),
+        df[(df["fold"] != cfg.fold) & (df["cancer"] == 1)].head(1),
+    )
 
     train_dataset = CustomDataset(df=train_df, cfg=cfg, aug=cfg.train_transforms)
     val_dataset = CustomDataset(df=val_df, cfg=cfg, aug=cfg.val_transforms)
