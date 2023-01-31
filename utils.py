@@ -23,7 +23,7 @@ def pfbeta(labels, predictions, beta):
     if ctp + cfp == 0:
         return 0
     c_precision = ctp / (ctp + cfp)
-    c_recall = ctp / y_true_count
+    c_recall = ctp / (y_true_count + 1e-6)
     if c_precision > 0 and c_recall > 0:
         result = (
             (1 + beta_squared)
