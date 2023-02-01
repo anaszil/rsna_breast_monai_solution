@@ -4,6 +4,7 @@ import numpy as np
 import torch
 from monai.utils import set_determinism
 from torch.utils.data import DataLoader, WeightedRandomSampler
+from exhaustive_weighted_random_sampler import ExhaustiveWeightedRandomSampler
 
 
 def pfbeta(labels, predictions, beta):
@@ -44,17 +45,17 @@ def set_seed(seed):
 def get_train_dataloader(train_dataset, cfg):
     df = train_dataset.df.copy()
     df["weight"] = 1
-    df.loc[df.cancer == 1, "weight"] = len(df.loc[df.cancer == 0]) / len(
-        df.loc[df.cancer == 1]
+    df.loc[df.cancer == 1, "weight"] = (
+        len(df.loc[df.cancer == 0]) / len(df.loc[df.cancer == 1]) / cfg.alpha
     )
-    wrs = WeightedRandomSampler(
-        weights=df.weight.tolist(), num_samples=len(df), replacement=True
-    )
-    # ewrs = ExhaustiveWeightedRandomSampler(df.weight.tolist(), num_samples=10000)
+    # wrs = WeightedRandomSampler(
+    #     weights=df.weight.tolist(), num_samples=len(df), replacement=True
+    # )
+    ewrs = ExhaustiveWeightedRandomSampler(df.weight.tolist(), num_samples=len(df))
 
     train_dataloader = DataLoader(
         train_dataset,
-        sampler=wrs,
+        sampler=ewrs,
         shuffle=cfg.shuffle,
         batch_size=cfg.batch_size,
         num_workers=cfg.num_workers,

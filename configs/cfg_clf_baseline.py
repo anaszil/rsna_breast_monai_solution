@@ -77,6 +77,7 @@ cfg.drop_rate = 0.2
 cfg.drop_path_rate = 0.0
 cfg.pretrained = True
 cfg.shuffle = True
+cfg.alpha = 1
 
 # transforms
 cfg.train_transforms = Compose(
