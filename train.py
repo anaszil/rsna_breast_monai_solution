@@ -91,17 +91,18 @@ def main(cfg, track_wandb=False):
         state_dict = torch.load(
             os.path.join(f"{cfg.output_dir}/fold{cfg.fold}", cfg.weights),
         )["model"]
-        state_dict = {
-            k.replace("nn_cancer.0", "module.classifier"): v
-            for k, v in state_dict.items()
-        }
-        state_dict = {
-            k.replace("nn_cancer.0", "module.classifier"): v
-            for k, v in state_dict.items()
-            if "nn_cancer.0" in k
-        }
+        # state_dict = {
+        #     k.replace("nn_cancer.0", "module.classifier"): v
+        #     for k, v in state_dict.items()
+        # }
+        # state_dict = {
+        #     k.replace("nn_cancer.0", "module.classifier"): v
+        #     for k, v in state_dict.items()
+        #     if "nn_cancer.0" in k
+        # }
 
-        model.load_state_dict(state_dict, strict=False)
+        model.load_state_dict(state_dict)
+
         if hasattr(cfg, "load_spec") and "optimizer" in cfg.load_spec:
             optimizer.load_state_dict(
                 torch.load(
