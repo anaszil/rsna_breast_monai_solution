@@ -126,18 +126,20 @@ def main(cfg, track_wandb=False):
     for epoch in range(cfg.epochs):
         print("EPOCH:", epoch)
         gc.collect()
-        run_train(
-            model=model,
-            train_dataloader=train_dataloader,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            cfg=cfg,
-            scaler=scaler,
-            epoch=epoch,
-            iteration=i,
-            step=step,
-            loss_function=loss_function,
-        )
+
+        if not (hasattr(cfg, "kaggle") and cfg.run_train == False):
+            run_train(
+                model=model,
+                train_dataloader=train_dataloader,
+                optimizer=optimizer,
+                scheduler=scheduler,
+                cfg=cfg,
+                scaler=scaler,
+                epoch=epoch,
+                iteration=i,
+                step=step,
+                loss_function=loss_function,
+            )
 
         val_metric = run_eval(
             model=model,
