@@ -87,11 +87,12 @@ def main(cfg, track_wandb=False):
         final_div_factor=cfg.lr_final_div,
     )
     if cfg.weights is not None:
-        model.load_state_dict(
-            torch.load(os.path.join(f"{cfg.output_dir}/fold{cfg.fold}", cfg.weights))[
-                "model"
-            ]
-        )
+
+        state_dict = torch.load(
+            os.path.join(f"{cfg.output_dir}/fold{cfg.fold}", cfg.weights)
+        )["model"]
+        state_dict = {k.replace("model", "module"): v for k, v in state_dict.items()}
+        model.load_state_dict(state_dict)
         if hasattr(cfg, "load_spec") and "optimizer" in cfg.load_spec:
             optimizer.load_state_dict(
                 torch.load(
