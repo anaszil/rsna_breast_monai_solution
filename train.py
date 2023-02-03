@@ -98,7 +98,7 @@ def main(cfg, track_wandb=False):
                     k.replace("nn_cancer.0", "module.classifier")
                 ] = state_dict.pop(k)
 
-        model.load_state_dict(state_dict)
+        model.load_state_dict(state_dict, strict=False)
 
         if hasattr(cfg, "load_spec") and "optimizer" in cfg.load_spec:
             optimizer.load_state_dict(
