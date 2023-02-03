@@ -91,10 +91,7 @@ def main(cfg, track_wandb=False):
         state_dict = torch.load(
             os.path.join(f"{cfg.output_dir}/fold{cfg.fold}", cfg.weights),
         )["model"]
-        state_dict = {
-            k.replace("nn_cancer.0", "module.classifier"): v
-            for k, v in state_dict.items()
-        }
+        state_dict = {k.replace("model.", "module."): v for k, v in state_dict.items()}
         state_dict = {
             k.replace("nn_cancer.0", "module.classifier"): v
             for k, v in state_dict.items()
