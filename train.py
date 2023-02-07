@@ -291,7 +291,7 @@ def run_eval(model, val_dataloader, cfg, epoch):
     except:
         bin_score = 0.0
     print(
-        "Val pF1: ",
+        "Val_pF1: ",
         score,
         "thresh: ",
         thresh,
@@ -300,15 +300,15 @@ def run_eval(model, val_dataloader, cfg, epoch):
         "AUC: ",
         auc,
     )
-    wandb.log(
-        {
-            "Val pF1": score,
-            "thresh": thresh,
-            "val pF1-thresh": bin_score,
-            "Val AUC": auc,
-        },
-        step=epoch,
-    )
+    nested_metrics = {
+        "Val_pF1": score,
+        "thresh": thresh,
+        "val pF1-thresh": bin_score,
+        "Val AUC": auc,
+    }
+    wandb.log(nested_metrics, step=epoch)
+    # the metric to be optimized needs to be logged at top-level for Wandb:
+    wandb.log({"Val_pF1", nested_metrics["Val_pF1"]}, step=epoch)
 
     return score
 
