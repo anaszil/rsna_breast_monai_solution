@@ -6,6 +6,8 @@ from monai.utils import set_determinism
 from torch.utils.data import DataLoader, WeightedRandomSampler
 from exhaustive_weighted_random_sampler import ExhaustiveWeightedRandomSampler
 
+import pandas as pd
+from sklearn.model_selection import StratifiedShuffleSplit
 
 def pfbeta(labels, predictions, beta):
     y_true_count = 0
@@ -143,3 +145,12 @@ def optimize_preds(
     if return_thresh:
         return thresh
     return preds
+
+
+def stratified_sample(df, test_size):
+    # Split the data into the specified test size and the rest for training
+    split = StratifiedShuffleSplit(n_splits=1, test_size=test_size, random_state=42)
+    for _, test_index in split.split(df, df["cancer"]):
+        strat_test_set = df.loc[test_index]
+        
+    return strat_test_set.reset_index(drop=True)

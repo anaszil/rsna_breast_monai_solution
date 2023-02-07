@@ -38,8 +38,14 @@ def main(cfg, track_wandb=False):
 
     os.makedirs(str(cfg.output_dir + f"/fold{cfg.fold}/"), exist_ok=True)
     set_seed(cfg.seed)
+
     # set dataset, dataloader
-    df = pd.read_csv(cfg.data_df)
+    if hasattr(cfg, "sweep_dataset_size") and hasattr(cfg, "do_sweep") and  cfg.do_sweep == True:
+        df_ = pd.read_csv(cfg.data_df)
+        # sample only sweep_dataset_size % of the whole dataframe
+        df = stratified_sample(df_, cfg.sweep_dataset_size)
+    else:
+        df = pd.read_csv(cfg.data_df)
 
     val_df = df[df["fold"] == cfg.fold]
     train_df = df[df["fold"] != cfg.fold]
