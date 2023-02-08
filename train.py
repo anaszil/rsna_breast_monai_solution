@@ -34,16 +34,17 @@ import timm
 import nextvit
 
 
-def main(cfg, track_wandb=False):
+def main(cfg, logger=None, track_wandb=False):
 
     os.makedirs(str(cfg.output_dir + f"/fold{cfg.fold}/"), exist_ok=True)
     set_seed(cfg.seed)
 
     # set dataset, dataloader
-    if hasattr(cfg, "sweep_dataset_size") and hasattr(cfg, "do_sweep") and  cfg.do_sweep == True:
+    if (hasattr(cfg, "sweep_dataset_size") and hasattr(cfg, "do_sweep") and cfg.do_sweep == True):
         df_ = pd.read_csv(cfg.data_df)
         # sample only sweep_dataset_size % of the whole dataframe
         df = stratified_sample(df_, cfg.sweep_dataset_size)
+        print(f"Using {cfg.sweep_dataset_size*100}% of train set for sweeps")
     else:
         df = pd.read_csv(cfg.data_df)
 
@@ -153,6 +154,7 @@ def main(cfg, track_wandb=False):
                 iteration=i,
                 step=step,
                 loss_function=loss_function,
+                logger=logger,
             )
 
         val_metric = run_eval(
@@ -160,6 +162,7 @@ def main(cfg, track_wandb=False):
             val_dataloader=val_dataloader,
             cfg=cfg,
             epoch=epoch,
+            logger=logger,
         )
 
         checkpoint = create_checkpoint(
@@ -195,6 +198,7 @@ def run_train(
     iteration,
     step,
     loss_function,
+    logger,
 ):
     model.train()
     losses = []
@@ -236,12 +240,19 @@ def run_train(
     score = pfbeta(all_labels, all_outputs, 1.0)
     auc = roc_auc_score(all_labels, all_outputs)
     print("Train pF1: ", score, "AUC: ", auc)
-    wandb.log(
-        {"Loss": np.mean(losses), "Train pF1": score, "Train AUC": auc}, step=epoch
-    )
+    
+    if logger is None:
+        wandb.log(
+            {"Loss": np.mean(losses), "Train pF1": score, "Train AUC": auc}, step=epoch
+        )
+    else:
+        logger.log(
+            {"Loss": np.mean(losses), "Train pF1": score, "Train AUC": auc}, step=epoch
+        )
 
 
-def run_eval(model, val_dataloader, cfg, epoch):
+
+def run_eval(model, val_dataloader, cfg, epoch, logger):
 
     model.eval()
     torch.set_grad_enabled(False)
@@ -306,9 +317,15 @@ def run_eval(model, val_dataloader, cfg, epoch):
         "val pF1-thresh": bin_score,
         "Val AUC": auc,
     }
-    wandb.log(nested_metrics, step=epoch)
-    # the metric to be optimized needs to be logged at top-level for Wandb:
-    wandb.log({"Val_pF1", nested_metrics["Val_pF1"]}, step=epoch)
+ 
+    if logger is None:
+        wandb.log(nested_metrics, step=epoch)
+        # the metric to be optimized needs to be logged at top-level for Wandb:
+        #wandb.log({"Val_pF1", nested_metrics["Val_pF1"]}, step=epoch)
+    else:
+        logger.log(nested_metrics, step=epoch)
+        # the metric to be optimized needs to be logged at top-level for Wandb:
+        #logger.log({"Val_pF1", nested_metrics["Val_pF1"]}, step=epoch)
 
     return score
 
