@@ -270,7 +270,7 @@ def run_eval(model, val_dataloader, cfg, epoch, logger):
     all_labels = []
     all_outputs = []
     all_ids = []
-    all_id_imgs = []
+    all_ids_imgs = []
 
     for itr in progress_bar:
         batch = next(tr_it)
@@ -286,11 +286,13 @@ def run_eval(model, val_dataloader, cfg, epoch, logger):
         all_outputs.extend(outputs)
         all_labels.extend(labels)
         all_ids.extend(ids)
-        all_id_imgs.extend(ids_imgs)
+        all_ids_imgs.extend(ids_imgs)
+    import pdb
 
+    pdb.set_trace()
     df_pred = pd.DataFrame.from_dict(all_ids)
     df_pred.columns = ["prediction_id"]
-    df_pred["id_imgs"] = all_id_imgs
+    df_pred["id_imgs"] = all_ids_imgs
     df_pred["all_labels"] = all_labels
     df_pred["all_outputs"] = all_outputs
 
