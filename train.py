@@ -287,9 +287,7 @@ def run_eval(model, val_dataloader, cfg, epoch, logger):
         all_labels.extend(labels)
         all_ids.extend(ids)
         all_ids_imgs.extend(ids_imgs)
-    import pdb
 
-    pdb.set_trace()
     df_pred = pd.DataFrame.from_dict(all_ids)
     df_pred.columns = ["prediction_id"]
     df_pred["id_imgs"] = all_ids_imgs
