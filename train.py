@@ -40,7 +40,11 @@ def main(cfg, logger=None, track_wandb=False):
     set_seed(cfg.seed)
 
     # set dataset, dataloader
-    if (hasattr(cfg, "sweep_dataset_size") and hasattr(cfg, "do_sweep") and cfg.do_sweep == True):
+    if (
+        hasattr(cfg, "sweep_dataset_size")
+        and hasattr(cfg, "do_sweep")
+        and cfg.do_sweep == True
+    ):
         df_ = pd.read_csv(cfg.data_df)
         # sample only sweep_dataset_size % of the whole dataframe
         df = stratified_sample(df_, cfg.sweep_dataset_size)
@@ -48,8 +52,12 @@ def main(cfg, logger=None, track_wandb=False):
     else:
         df = pd.read_csv(cfg.data_df)
 
-    val_df = df[df["fold"] == cfg.fold]
-    train_df = df[df["fold"] != cfg.fold]
+    if hasattr(cfg, "run_val_whole_data") and cfg.run_val_whole_data == True:
+        val_df = df
+        train_df = df[df["fold"] == cfg.fold]  # not used !!!
+    else:
+        val_df = df[df["fold"] == cfg.fold]
+        train_df = df[df["fold"] != cfg.fold]
 
     train_dataset = CustomDataset(df=train_df, cfg=cfg, aug=cfg.train_transforms)
     val_dataset = CustomDataset(df=val_df, cfg=cfg, aug=cfg.val_transforms)
@@ -240,7 +248,7 @@ def run_train(
     score = pfbeta(all_labels, all_outputs, 1.0)
     auc = roc_auc_score(all_labels, all_outputs)
     print("Train pF1: ", score, "AUC: ", auc)
-    
+
     if logger is None:
         wandb.log(
             {"Loss": np.mean(losses), "Train pF1": score, "Train AUC": auc}, step=epoch
@@ -249,7 +257,6 @@ def run_train(
         logger.log(
             {"Loss": np.mean(losses), "Train pF1": score, "Train AUC": auc}, step=epoch
         )
-
 
 
 def run_eval(model, val_dataloader, cfg, epoch, logger):
@@ -317,15 +324,15 @@ def run_eval(model, val_dataloader, cfg, epoch, logger):
         "val pF1-thresh": bin_score,
         "Val AUC": auc,
     }
- 
+
     if logger is None:
         wandb.log(nested_metrics, step=epoch)
         # the metric to be optimized needs to be logged at top-level for Wandb:
-        #wandb.log({"Val_pF1", nested_metrics["Val_pF1"]}, step=epoch)
+        # wandb.log({"Val_pF1", nested_metrics["Val_pF1"]}, step=epoch)
     else:
         logger.log(nested_metrics, step=epoch)
         # the metric to be optimized needs to be logged at top-level for Wandb:
-        #logger.log({"Val_pF1", nested_metrics["Val_pF1"]}, step=epoch)
+        # logger.log({"Val_pF1", nested_metrics["Val_pF1"]}, step=epoch)
 
     return score
 

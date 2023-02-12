@@ -80,6 +80,7 @@ cfg.shuffle = True
 cfg.alpha = 1
 cfg.sweep_dataset_size = 0.4
 cfg.do_sweep = False
+cfg.run_val_whole_data = False
 
 # transforms
 cfg.train_transforms = Compose(
