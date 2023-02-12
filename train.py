@@ -53,10 +53,10 @@ def main(cfg, logger=None, track_wandb=False):
         df = pd.read_csv(cfg.data_df)
 
     if hasattr(cfg, "run_val_whole_data") and cfg.run_val_whole_data == True:
-        val_df = df
+        val_df = df.head(64)
         train_df = df[df["fold"] == cfg.fold]  # not used !!!
     else:
-        val_df = df[df["fold"] == cfg.fold].head(64)
+        val_df = df[df["fold"] == cfg.fold]
         train_df = df[df["fold"] != cfg.fold]
 
     train_dataset = CustomDataset(df=train_df, cfg=cfg, aug=cfg.train_transforms)
