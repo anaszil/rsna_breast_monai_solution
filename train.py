@@ -53,7 +53,7 @@ def main(cfg, logger=None, track_wandb=False):
         df = pd.read_csv(cfg.data_df)
 
     if hasattr(cfg, "run_val_whole_data") and cfg.run_val_whole_data == True:
-        val_df = df.head(64)
+        val_df = df
         train_df = df[df["fold"] == cfg.fold]  # not used !!!
     else:
         val_df = df[df["fold"] == cfg.fold]
@@ -127,7 +127,7 @@ def main(cfg, logger=None, track_wandb=False):
                     os.path.join(f"{cfg.output_dir}/fold{cfg.fold}", cfg.weights)
                 )["scheduler"]
             )
-        print(f"weights from: {cfg.weights} are loaded.")
+        print(f"weights from: {cfg.weiFghts} are loaded.")
 
     # set loss
     loss_function = torch.nn.BCEWithLogitsLoss(
