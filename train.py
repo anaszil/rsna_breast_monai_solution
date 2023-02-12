@@ -127,7 +127,7 @@ def main(cfg, logger=None, track_wandb=False):
                     os.path.join(f"{cfg.output_dir}/fold{cfg.fold}", cfg.weights)
                 )["scheduler"]
             )
-        print(f"weights from: {cfg.weiFghts} are loaded.")
+        print(f"weights from: {cfg.weights} are loaded.")
 
     # set loss
     loss_function = torch.nn.BCEWithLogitsLoss(
