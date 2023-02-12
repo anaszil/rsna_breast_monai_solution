@@ -56,7 +56,7 @@ def main(cfg, logger=None, track_wandb=False):
         val_df = df
         train_df = df[df["fold"] == cfg.fold]  # not used !!!
     else:
-        val_df = df[df["fold"] == cfg.fold]
+        val_df = df[df["fold"] == cfg.fold].head(64)
         train_df = df[df["fold"] != cfg.fold]
 
     train_dataset = CustomDataset(df=train_df, cfg=cfg, aug=cfg.train_transforms)
