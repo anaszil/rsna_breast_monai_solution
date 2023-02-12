@@ -59,6 +59,7 @@ class CustomDataset(Dataset):
             "image": img_path,
             "prediction_id": sample.prediction_id,
             "label": label,
+            "id": f'{self.df["patient_id"]}_{self.df["image_id"]}',
         }
 
         return self.aug(data)
