@@ -270,6 +270,7 @@ def run_eval(model, val_dataloader, cfg, epoch, logger):
     all_labels = []
     all_outputs = []
     all_ids = []
+    all_imgs = []
 
     for itr in progress_bar:
         batch = next(tr_it)
@@ -277,6 +278,7 @@ def run_eval(model, val_dataloader, cfg, epoch, logger):
             cfg.device
         )
         ids = batch["prediction_id"]
+        path_imgs = batch["image"]
         outputs = model(inputs)
         outputs = list(torch.sigmoid(outputs).detach().cpu().numpy()[:, 0])
         labels = list(labels.detach().cpu().numpy()[:, 0])
@@ -284,9 +286,11 @@ def run_eval(model, val_dataloader, cfg, epoch, logger):
         all_outputs.extend(outputs)
         all_labels.extend(labels)
         all_ids.extend(ids)
+        all_imgs.extend(path_imgs)
 
     df_pred = pd.DataFrame.from_dict(all_ids)
     df_pred.columns = ["prediction_id"]
+    df_pred["path_imgs"] = path_imgs
     df_pred["all_labels"] = all_labels
     df_pred["all_outputs"] = all_outputs
 
