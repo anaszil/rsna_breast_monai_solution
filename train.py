@@ -289,6 +289,11 @@ def run_eval(model, val_dataloader, cfg, epoch, logger):
     df_pred.columns = ["prediction_id"]
     df_pred["all_labels"] = all_labels
     df_pred["all_outputs"] = all_outputs
+
+    if hasattr(cfg, "run_val_whole_data") and cfg.run_val_whole_data == True:
+        print("saving results of validation : ")
+        df_pred.to_csv("results.csv")
+
     df_pred = df_pred.groupby(["prediction_id"]).mean().reset_index()
     all_labels = df_pred["all_labels"]
     all_outputs = df_pred["all_outputs"]
